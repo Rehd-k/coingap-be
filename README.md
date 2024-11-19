@@ -84,27 +84,32 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-
-lemme try 
-collect exchange data
-collect price data 
-compare price data 
-keep in table 
+lemme try
+collect exchange data (volume, is withdrawable, )
+collect price data
+compare price data
+keep in table
 user to view price data
 
-user join, user see prices, user adds their api, user see thier prices, user loads money to buybit, then from there the trading begins 
+user join, user see prices, user adds their api, user see thier prices, user loads money to buybit, then from there the trading begins
 
 user buy spread fund in buybit,
 user send spread funds to "buy from" exchange,
 user clicks buy from "buy from" token,
 user withdraws funds into "sell to" exchange,
-user clicks sell, 
-then withdraw funds back to buybit 
+user clicks sell,
+then withdraw funds back to buybit
 
 to use bot user pay money
+volume : getTradingDayTicker()
+Volume-to-Market Cap Ratio= Market Capitalization / 24h Trading Volume 
+Market Capitalization=Price of Coin×Circulating Supply
 
+##Higher ratio: A high volume-to-market cap ratio (e.g., above 0.10 or 10%) means there’s significant trading activity  relative to the market value, which could indicate high liquidity or speculative interest.
+Lower ratio: A low ratio (e.g., below 0.01 or 1%) suggests the asset is not being traded as much relative to its market cap, potentially indicating lower liquidity or market interest.
+​
 
-login 
+login
 trade
 paybot
 profollio
