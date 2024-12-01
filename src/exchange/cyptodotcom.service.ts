@@ -4,7 +4,7 @@ import { firstValueFrom, catchError } from 'rxjs';
 import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
-export class ExchangedotcomService {
+export class CryptodotcomService {
   constructor(private httpService: HttpService) {}
 
   async getCoins() {
