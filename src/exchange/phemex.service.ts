@@ -8,7 +8,7 @@ export class PhemexClient {
   constructor(
     private httpService: HttpService,
     private api: ApiServices,
-  ) {}
+  ) { }
 
   async getCoins() {
     const { data } = await firstValueFrom(
@@ -25,7 +25,7 @@ export class PhemexClient {
           }),
         ),
     );
-    this.removeAllNonUSDTCoins(data.result);
+    return this.removeAllNonUSDTCoins(data.result);
   }
 
   /**
@@ -41,22 +41,41 @@ export class PhemexClient {
       obj.symbol = obj.symbol.replace('USDT', '');
     });
 
-    this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(usdtTickers);
   };
 
   private _getCoinPrices(useFulldata) {
+
+
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Phemex') {
-          res.info.push({
-            coin: coins.symbol,
-            price: coins.lastEp,
-            volume: coins.turnoverEv,
-            askPrice: coins.askEp,
-            bidPrice: coins.bidEp,
-          });
+      prices.push(
+        {
+          coin: coins.symbol,
+          price: coins.lastEp,
+          volume: coins.turnoverEv,
+          askPrice: coins.askEp,
+          bidPrice: coins.bidEp,
         }
-      });
+      )
+
     });
+    return prices
+
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'Phemex') {
+    //       res.info.push({
+    //         coin: coins.symbol,
+    //         price: coins.lastEp,
+    //         volume: coins.turnoverEv,
+    //         askPrice: coins.askEp,
+    //         bidPrice: coins.bidEp,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

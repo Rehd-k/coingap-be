@@ -7,33 +7,41 @@ import {
 
 @Injectable()
 export class BitgetService {
-  constructor(private api: ApiServices) {}
+  constructor(private api: ApiServices) { }
 
   async getCoinData() {
     let data: any;
     try {
       data = await this.api.bitgetClient.getSpotTicker();
       const usefulldata = removeAllNonUSDTCoins(data.data);
-      this._getCoinPrices(usefulldata);
+      return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
   }
 
   private _getCoinPrices(useFulldata) {
+    const prices = []
     useFulldata.map((coins) => {
-      exchangeList.forEach((res) => {
-        if (res.name === 'Bitget') {
-          res.info.push({
-            coin: coins.symbol,
-            price: coins.lastPrice,
-            volume: coins.turnover24h,
-            askPrice: coins.ask1Price,
-            bidPrice: coins.bid1Price,
-          });
-        }
-      });
-      console.log(JSON.stringify(exchangeList));
+      prices.push({
+        coin: coins.symbol,
+        price: coins.lastPrice,
+        volume: coins.turnover24h,
+        askPrice: coins.ask1Price,
+        bidPrice: coins.bid1Price,
+      })
+      // exchangeList.forEach((res) => {
+      //   if (res.name === 'Bitget') {
+      //     res.info.push({
+      //       coin: coins.symbol,
+      //       price: coins.lastPrice,
+      //       volume: coins.turnover24h,
+      //       askPrice: coins.ask1Price,
+      //       bidPrice: coins.bid1Price,
+      //     });
+      //   }
+      // });
+      
     });
 
     // fs.writeFile(
@@ -47,5 +55,6 @@ export class BitgetService {
     //     }
     //   },
     // );
+    return prices
   }
 }

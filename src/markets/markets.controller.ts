@@ -1,4 +1,13 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ExchangeService } from 'src/exchange/exchange.service';
 
 @Controller('markets')
-export class MarketsController {}
+export class MarketsController {
+    constructor(private exchangeService: ExchangeService) { }
+
+    @Get()
+    async getAllPrices() {
+        return this.exchangeService.getChangesList();
+    }
+
+}

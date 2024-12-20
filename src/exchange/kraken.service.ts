@@ -29,7 +29,7 @@ export class KrakenService {
   constructor(
     private HttpService: HttpService,
     private api: ApiServices,
-  ) {}
+  ) { }
 
   async getCoins() {
     const { data } = await firstValueFrom(
@@ -45,7 +45,7 @@ export class KrakenService {
       ),
     );
     console.log(JSON.stringify(data));
-    this.transformApiResponse(data);
+    return this.transformApiResponse(data);
   }
 
   /**
@@ -77,25 +77,19 @@ export class KrakenService {
         });
       }
     });
-    this._getCoinPrices(transformed);
+   return this._getCoinPrices(transformed);
   }
   private _getCoinPrices(useFulldata) {
-    exchangeList.map((res) => {
-      if (res.name === 'OKX') {
-        res.info = useFulldata;
-      }
-    });
-    console.log(exchangeList);
-    fs.writeFile(
-      'src/helpers/general/exchanges.ts',
-      JSON.stringify(exchangeList),
-      (err) => {
-        if (err) {
-          console.log('Error writing file', err);
-        } else {
-          console.log('Successfully wrote file');
-        }
-      },
-    );
+    let prices = useFulldata
+
+   
+    return prices
+    // exchangeList.map((res) => {
+    //   if (res.name === 'OKX') {
+    //     res.info = useFulldata;
+    //   }
+    // });
+    // console.log(exchangeList);
+
   }
 }

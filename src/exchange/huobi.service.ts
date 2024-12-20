@@ -4,13 +4,13 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class HuobiService {
-  constructor(private api: ApiServices) {}
+  constructor(private api: ApiServices) { }
   async getCoinData() {
     let data: any;
     try {
       data = await this.api.huobiClient.getTickers();
       const usefulldata = this.removeAllNonUSDTCoins(data.data);
-      this._getCoinPrices(usefulldata);
+      return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -33,18 +33,34 @@ export class HuobiService {
   };
 
   private _getCoinPrices(useFulldata) {
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins.symbol,
-            price: coins.last,
-            volume: coins.vol,
-            askPrice: coins.ask,
-            bidPrice: coins.bid,
-          });
+      prices.push(
+        {
+          coin: coins.symbol,
+          price: coins.last,
+          volume: coins.vol,
+          askPrice: coins.ask,
+          bidPrice: coins.bid,
         }
-      });
+      )
+
     });
+    return prices
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'Gate.io') {
+    //       res.info.push({
+    //         coin: coins.symbol,
+    //         price: coins.last,
+    //         volume: coins.vol,
+    //         askPrice: coins.ask,
+    //         bidPrice: coins.bid,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

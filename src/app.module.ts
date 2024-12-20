@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -7,6 +7,9 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { MarketsModule } from './markets/markets.module';
 import { ConfigModule } from '@nestjs/config';
 import { ExchangeModule } from './exchange/exchange.module';
+import { LoggerModule } from 'nestjs-pino';
+import { LoggingMiddleware } from './middlewares/logger.middleware';
+import 'pino-pretty'
 
 @Module({
   imports: [
@@ -18,8 +21,25 @@ import { ExchangeModule } from './exchange/exchange.module';
       isGlobal: true,
     }),
     ExchangeModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: 'info', // Set log level
+        transport: process.env.NODE_ENV !== 'production' ? {
+          target: 'pino-pretty',
+          options: {
+            
+            colorize: true,
+            translateTime: 'HH:MM:ss',
+          },
+        } : undefined, // Pretty logs in development
+      },
+    })
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}

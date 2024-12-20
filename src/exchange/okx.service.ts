@@ -4,14 +4,14 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class OkxService {
-  constructor(private api: ApiServices) {}
+  constructor(private api: ApiServices) { }
 
   async getCoinData() {
     let data: any;
     try {
       data = await this.api.okxClient.getTickers('SPOT');
       const usefulldata = this.removeAllNonUSDTCoins(data.result.list);
-      this._getCoinPrices(usefulldata);
+      return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -37,18 +37,37 @@ export class OkxService {
   }
 
   private _getCoinPrices(useFulldata) {
+
+
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'OKX') {
-          res.info.push({
-            coin: coins.instId[0],
-            price: coins.last,
-            volume: coins.volCcy24h,
-            askPrice: coins.askPx,
-            bidPrice: coins.bidPx,
-          });
+      prices.push(
+        {
+          coin: coins.instId[0],
+          price: coins.last,
+          volume: coins.volCcy24h,
+          askPrice: coins.askPx,
+          bidPrice: coins.bidPx,
         }
-      });
+      )
+
     });
+    return prices
+
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'OKX') {
+    //       res.info.push({
+    //         coin: coins.instId[0],
+    //         price: coins.last,
+    //         volume: coins.volCcy24h,
+    //         askPrice: coins.askPx,
+    //         bidPrice: coins.bidPx,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

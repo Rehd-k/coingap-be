@@ -11,13 +11,14 @@ export class CoinbaseService {
 
   async getCoinData() {
     let data: any;
-    try {
-      data = await this.api.coinbaseproClient.rest.product.getProducts();
-      const usefulldata = removeAllNonUSDTCoins(data);
-      this._getCoinPrices(usefulldata);
-    } catch (err) {
-      throw new BadRequestException(err);
-    }
+    // try {
+    //   data = await this.api.coinbaseproClient.rest.product.getProducts();
+    //   const usefulldata = removeAllNonUSDTCoins(data);
+    //   return this._getCoinPrices(usefulldata);
+    // } catch (err) {
+    //   throw new BadRequestException(err);
+    // }
+    return []
   }
 
   /**
@@ -37,18 +38,34 @@ export class CoinbaseService {
   };
 
   private _getCoinPrices(useFulldata) {
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins.currency_pair,
-            price: coins.last,
-            volume: coins.quote_volume,
-            askPrice: coins.lowest_ask,
-            bidPrice: coins.highest_bid,
-          });
+      prices.push(
+        {
+          coin: coins.currency_pair,
+          price: coins.last,
+          volume: coins.quote_volume,
+          askPrice: coins.lowest_ask,
+          bidPrice: coins.highest_bid,
         }
-      });
+      )
+    
     });
+    return prices
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'Gate.io') {
+    //       res.info.push({
+    //         coin: coins.currency_pair,
+    //         price: coins.last,
+    //         volume: coins.quote_volume,
+    //         askPrice: coins.lowest_ask,
+    //         bidPrice: coins.highest_bid,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

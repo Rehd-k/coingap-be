@@ -5,7 +5,7 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class CryptodotcomService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   async getCoins() {
     const { data } = await firstValueFrom(
@@ -22,7 +22,7 @@ export class CryptodotcomService {
           }),
         ),
     );
-    this.removeAllNonUSDTCoins(data.result.data);
+    return this.removeAllNonUSDTCoins(data.result.data);
   }
 
   /**
@@ -38,22 +38,38 @@ export class CryptodotcomService {
       obj.i = obj.i.replace('-USDT', '');
     });
 
-    this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(usdtTickers);
   };
 
   private _getCoinPrices(useFulldata) {
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins.i,
-            price: coins.a,
-            volume: coins.vv,
-            askPrice: coins.k,
-            bidPrice: coins.b,
-          });
+      prices.push(
+        {
+          coin: coins.i,
+          price: coins.a,
+          volume: coins.vv,
+          askPrice: coins.k,
+          bidPrice: coins.b,
         }
-      });
+      )
+
     });
+    return prices
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'Gate.io') {
+    //       res.info.push({
+    //         coin: coins.i,
+    //         price: coins.a,
+    //         volume: coins.vv,
+    //         askPrice: coins.k,
+    //         bidPrice: coins.b,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

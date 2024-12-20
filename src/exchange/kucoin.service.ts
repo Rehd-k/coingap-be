@@ -14,27 +14,45 @@ export class kucoinService {
     try {
       data = await this.api.kucoinClient.getTickers();
       const usefulldata = removeAllNonUSDTCoins(data.data);
-      this._getCoinPrices(usefulldata);
+      return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
   }
 
   private _getCoinPrices(useFulldata) {
+
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.forEach((res) => {
-        if (res.name === 'Bitget') {
-          res.info.push({
-            coin: coins.symbol,
-            price: coins.lastPrice,
-            volume: coins.turnover24h,
-            askPrice: coins.ask1Price,
-            bidPrice: coins.bid1Price,
-          });
+      prices.push(
+        {
+          coin: coins.symbol,
+          price: coins.lastPrice,
+          volume: coins.turnover24h,
+          askPrice: coins.ask1Price,
+          bidPrice: coins.bid1Price,
         }
-      });
-      console.log(JSON.stringify(exchangeList));
+      )
+
     });
+    return prices
+
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.forEach((res) => {
+    //     if (res.name === 'Bitget') {
+    //       res.info.push({
+    //         coin: coins.symbol,
+    //         price: coins.lastPrice,
+    //         volume: coins.turnover24h,
+    //         askPrice: coins.ask1Price,
+    //         bidPrice: coins.bid1Price,
+    //       });
+    //     }
+    //   });
+    //   console.log(JSON.stringify(exchangeList));
+    // });
 
     // fs.writeFile(
     //   'src/helpers/general/exchanges.ts',

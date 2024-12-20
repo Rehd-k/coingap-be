@@ -4,13 +4,13 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class GateioService {
-  constructor(private api: ApiServices) {}
+  constructor(private api: ApiServices) { }
   async getCoinData() {
     let data: any;
     try {
       data = await this.api.gateioClient.getSpotTicker();
       const usefulldata = this.removeAllNonUSDTCoins(data);
-      this._getCoinPrices(usefulldata);
+      return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -33,18 +33,36 @@ export class GateioService {
   };
 
   private _getCoinPrices(useFulldata) {
+
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins.currency_pair,
-            price: coins.last,
-            volume: coins.quote_volume,
-            askPrice: coins.lowest_ask,
-            bidPrice: coins.highest_bid,
-          });
+      prices.push(
+        {
+          coin: coins.currency_pair,
+          price: coins.last,
+          volume: coins.quote_volume,
+          askPrice: coins.lowest_ask,
+          bidPrice: coins.highest_bid,
         }
-      });
+      )
+
     });
+    return prices
+
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'Gate.io') {
+    //       res.info.push({
+    //         coin: coins.currency_pair,
+    //         price: coins.last,
+    //         volume: coins.quote_volume,
+    //         askPrice: coins.lowest_ask,
+    //         bidPrice: coins.highest_bid,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

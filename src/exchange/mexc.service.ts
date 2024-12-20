@@ -10,7 +10,7 @@ export class MexcService {
     let data: any;
     try {
       data = await this.api.mexcClient.ticker24hr();
-      this.removeAllNonUSDTCoins(data);
+      return this.removeAllNonUSDTCoins(data);
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -29,22 +29,39 @@ export class MexcService {
       obj.symbol = obj.symbol.replace('USDT', '');
     });
 
-    this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(usdtTickers);
   };
 
   private _getCoinPrices(useFulldata) {
+    
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'MEXC') {
-          res.info.push({
-            coin: coins.symbol,
-            price: coins.lastPrice,
-            volume: coins.quoteVolume,
-            askPrice: coins.askPrice,
-            bidPrice: coins.bidPrice,
-          });
+      prices.push(
+        {
+          coin: coins.symbol,
+          price: coins.lastPrice,
+          volume: coins.quoteVolume,
+          askPrice: coins.askPrice,
+          bidPrice: coins.bidPrice,
         }
-      });
+      )
+
     });
+    return prices
+
+    // useFulldata.map((coins) => {
+    //   exchangeList.map((res) => {
+    //     if (res.name === 'MEXC') {
+    //       res.info.push({
+    //         coin: coins.symbol,
+    //         price: coins.lastPrice,
+    //         volume: coins.quoteVolume,
+    //         askPrice: coins.askPrice,
+    //         bidPrice: coins.bidPrice,
+    //       });
+    //     }
+    //   });
+    // });
   }
 }

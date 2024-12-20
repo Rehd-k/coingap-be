@@ -7,9 +7,8 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 @Injectable()
 export class BitfinexService {
   constructor(
-    private api: ApiServices,
     private httpService: HttpService,
-  ) {}
+  ) { }
 
   async getCoins() {
     const { data } = await firstValueFrom(
@@ -27,7 +26,7 @@ export class BitfinexService {
         ),
     );
     console.log(JSON.stringify(data));
-    this.removeAllNonUSDTCoins(data);
+    return this.removeAllNonUSDTCoins(data);
   }
 
   /**
@@ -43,22 +42,31 @@ export class BitfinexService {
       obj.currency_pair = obj.currency_pair.replace('USDT', '');
     });
 
-    this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(usdtTickers);
   };
 
   private _getCoinPrices(useFulldata) {
+    let priceses = [];
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins[0],
-            price: coins[7],
-            volume: coins[8],
-            askPrice: coins[3],
-            bidPrice: coins[1],
-          });
-        }
-      });
+      priceses.push({
+        coin: coins[0],
+        price: coins[7],
+        volume: coins[8],
+        askPrice: coins[3],
+        bidPrice: coins[1],
+      })
+      // exchangeList.map((res) => {
+      //   if (res.name === 'Bitfinex') {
+      //     res.info.push({
+      //       coin: coins[0],
+      //       price: coins[7],
+      //       volume: coins[8],
+      //       askPrice: coins[3],
+      //       bidPrice: coins[1],
+      //     });
+      //   }
+      // });
     });
+    return priceses
   }
 }

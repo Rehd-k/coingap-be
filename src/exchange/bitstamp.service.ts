@@ -5,7 +5,7 @@ import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class BitstampService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   async getCoins() {
     const { data } = await firstValueFrom(
@@ -23,6 +23,7 @@ export class BitstampService {
         ),
     );
     console.log(JSON.stringify(data));
+    return this._getCoinPrices(data);
   }
 
   /**
@@ -38,22 +39,34 @@ export class BitstampService {
       obj.pair = obj.pair.replace('/USDT', '');
     });
 
-    this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(usdtTickers);
   };
 
   private _getCoinPrices(useFulldata) {
+    let prices = []
+
     useFulldata.map((coins) => {
-      exchangeList.map((res) => {
-        if (res.name === 'Gate.io') {
-          res.info.push({
-            coin: coins.pair,
-            price: coins.last,
-            volume: coins.volume,
-            askPrice: coins.ask,
-            bidPrice: coins.bid,
-          });
+      prices.push(
+        {
+          coin: coins.pair,
+          price: coins.last,
+          volume: coins.volume,
+          askPrice: coins.ask,
+          bidPrice: coins.bid,
         }
-      });
+      )
+      // exchangeList.map((res) => {
+      //   if (res.name === 'Gate.io') {
+      //     res.info.push({
+      //       coin: coins.pair,
+      //       price: coins.last,
+      //       volume: coins.volume,
+      //       askPrice: coins.ask,
+      //       bidPrice: coins.bid,
+      //     });
+      //   }
+      // });
     });
+    return prices
   }
 }
