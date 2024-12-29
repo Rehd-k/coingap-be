@@ -14,7 +14,7 @@ import 'pino-pretty'
 @Module({
   imports: [
     UserModule,
-    MongooseModule.forRoot('mongodb://localhost/nest'),
+    MongooseModule.forRoot("mongodb+srv://Rehdd-k:VTCF6myA9ltnJ6Rx@cryptoknight.2rshc.mongodb.net/goziebank?retryWrites=true&w=majority"),
     TransactionsModule,
     MarketsModule,
     ConfigModule.forRoot({

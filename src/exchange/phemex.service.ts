@@ -11,9 +11,10 @@ export class PhemexClient {
   ) { }
 
   async getCoins() {
+    
     const { data } = await firstValueFrom(
       this.httpService
-        .get('https://api.phemex.commd/spot/ticker/24hr/all', {
+        .get('https://api.phemex.com/md/spot/ticker/24hr/all', {
           maxContentLength: Infinity,
           headers: {
             Accept: 'application/json',
@@ -25,6 +26,8 @@ export class PhemexClient {
           }),
         ),
     );
+    console.log(data)
+  
     return this.removeAllNonUSDTCoins(data.result);
   }
 
@@ -33,9 +36,11 @@ export class PhemexClient {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    console.log(apiData)
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
       ticker.symbol.endsWith('USDT'),
     );
+
 
     usdtTickers.forEach((obj) => {
       obj.symbol = obj.symbol.replace('USDT', '');

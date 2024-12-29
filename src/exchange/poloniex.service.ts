@@ -9,6 +9,7 @@ export class PoloniexService {
     let data: any;
     try {
       data = await this.api.poloniexClient.getTicker();
+      console.log(data)
       return this.removeAllNonUSDTCoins(data);
     } catch (err) {
       throw new BadRequestException(err);

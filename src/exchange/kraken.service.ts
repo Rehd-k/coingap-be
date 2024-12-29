@@ -44,7 +44,6 @@ export class KrakenService {
         }),
       ),
     );
-    console.log(JSON.stringify(data));
     return this.transformApiResponse(data);
   }
 

@@ -27,8 +27,10 @@ export class BybitService {
           }),
         )
       )
-      const usefulldata = removeAllNonUSDTCoins(data.result.list);
+      // console.log(data)
+      const usefulldata = removeAllNonUSDTCoins(data.data.result.list);
       return this._getCoinPrices(usefulldata);
+
 
       // this.api.byBitClient.getTickers({
       //   category: 'spot',
@@ -37,7 +39,6 @@ export class BybitService {
       // const usefulldata = removeAllNonUSDTCoins(data.result.list);
       // return this._getCoinPrices(usefulldata);
     } catch (err) {
-      console.log(`${err}`)
       throw new BadRequestException(err);
     }
   }

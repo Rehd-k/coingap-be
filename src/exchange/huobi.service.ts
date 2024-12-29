@@ -9,7 +9,8 @@ export class HuobiService {
     let data: any;
     try {
       data = await this.api.huobiClient.getTickers();
-      const usefulldata = this.removeAllNonUSDTCoins(data.data);
+
+      const usefulldata = this.removeAllNonUSDTCoins(data);
       return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
@@ -22,13 +23,15 @@ export class HuobiService {
    */
   removeAllNonUSDTCoins = (apiData: any) => {
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('USDT'),
+      ticker.symbol.endsWith('usdt'),
     );
 
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('_USDT', '');
+      obj.symbol = obj.symbol.replace('usdt', '');
     });
 
+    
+  
     return usdtTickers;
   };
 
@@ -39,7 +42,7 @@ export class HuobiService {
       prices.push(
         {
           coin: coins.symbol,
-          price: coins.last,
+          price: coins.close,
           volume: coins.vol,
           askPrice: coins.ask,
           bidPrice: coins.bid,

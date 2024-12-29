@@ -10,7 +10,7 @@ export class OkxService {
     let data: any;
     try {
       data = await this.api.okxClient.getTickers('SPOT');
-      const usefulldata = this.removeAllNonUSDTCoins(data.result.list);
+      const usefulldata = this.removeAllNonUSDTCoins(data);
       return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
@@ -22,17 +22,15 @@ export class OkxService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins(apiData: any) {
-    const usdtTickers = apiData.result.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('USDT'),
+    const usdtTickers = apiData.filter((ticker: { instId: string }) =>
+      ticker.instId.endsWith('USDT'),
     );
 
+
+
     usdtTickers.forEach((obj) => {
-      // Replace 'USDT' with '-USDT' using a regex to insert the hyphen before 'USDT'
-      if (!obj.instId.includes('-')) {
-        obj.instId = obj.instId.replace(/(.*)(USDT)/, '$1-$2');
-      }
+      obj.instId = obj.instId.replace('-USDT', '');
     });
-    usdtTickers.map((res) => res.instId.split('-'));
     return usdtTickers;
   }
 
@@ -44,7 +42,7 @@ export class OkxService {
     useFulldata.map((coins) => {
       prices.push(
         {
-          coin: coins.instId[0],
+          coin: coins.instId,
           price: coins.last,
           volume: coins.volCcy24h,
           askPrice: coins.askPx,

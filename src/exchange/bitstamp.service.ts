@@ -22,7 +22,6 @@ export class BitstampService {
           }),
         ),
     );
-    console.log(JSON.stringify(data));
     return this._getCoinPrices(data);
   }
 

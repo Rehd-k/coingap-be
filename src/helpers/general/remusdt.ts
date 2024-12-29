@@ -28,3 +28,44 @@ export let exchangeList: CoinsType[] = [];
 export function handleExchanges(data) {
   exchangeList = data;
 }
+
+
+// [
+        //   {
+        //     name: 'BTC',
+        //     info: [
+        //       ,
+        //       {
+        //         vol: 0,
+        //         ask: 0,
+        //         bid: 0,
+        //         exchange: 'OKx'
+        //       },
+        //       ,
+        //       {
+        //         vol: 0,
+        //         ask: 0,
+        //         bid: 0,
+        //         exchange: 'bybit'
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     name: 'BTC',
+        //     info: [
+        //       {
+        //         vol: 0,
+        //         ask: 0,
+        //         bid: 0,
+        //         exchange: 'ByBit'
+        //       },
+        //       {
+        //         vol: 0,
+        //         ask: 0,
+        //         bid: 0,
+        //         exchange: 'OKx'
+        //       }
+        //     ]
+        //   }
+
+        // ]

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BinanceService } from './binance.service';
 import { OkxService } from './okx.service';
 import { BybitService } from './bybit.service';
@@ -44,28 +44,58 @@ export class ExchangeService {
     let coin_to_be_arranged = []
     let coin_arranged = []
     try {
-      const [bybit,
-        //  okx, kraken, bitfinex, bitstamp, gateio, huobi, kucoin, mexc, phomex, poloniex
+      // mexc, phomex, poloniex ,
+      const [
+        okx, 
+        bybit,
+        kraken,
+        bitfinex,
+        gateio,
+        huobi,
+        kucoin,
+        mexc,
+        phomex,
+        poloniex
       ] = await Promise.all([
         this.byBit.getCoinData(),
-        // this.okx.getCoinData(),
+        this.okx.getCoinData(),
+        this.kraken.getCoins(),
         // this.binance.getCoinData(),
-        // this.kraken.getCoins(),
-        // this.bitfinex.getCoins(),
+
+        this.bitfinex.getCoins(),
+        this.Gateio.getCoinData(),
+        this.Huobi.getCoinData(),
+        this.kucoin.getCoinData(),
+        this.Mexc.getCoinData(),
+        ['this.phomex.getCoins()'],
+        ['this.Poloniex.getCoinData()']
         // this.bitstamp.getCoins(),
         // this.coinBase.getCoinData(),
-        // this.Gateio.getCoinData(),
-        // this.Huobi.getCoinData(),
-        // this.kucoin.getCoinData(),
-        // this.Mexc.getCoinData(),
+
+
+        // ,
+        // 
         // this.phomex.getCoins(),
         // this.Poloniex.getCoinData()
       ]);
 
+
+
       const full_data = {
-        bybit
-        // okx, kraken, bitfinex, bitstamp, gateio, huobi, kucoin, mexc, phomex, poloniex
+        okx,
+        bybit,
+        kraken,
+        bitfinex,
+        gateio,
+        huobi,
+        kucoin,
+        mexc,
+        phomex,
+
       }
+
+      // return full_data
+     //  phomex, poloniex 
 
 
       const findHighestAndLowestPrices = (array) => {
@@ -87,72 +117,32 @@ export class ExchangeService {
       };
 
       for (const coin of coins) {
-        // [
-        //   {
-        //     name: 'BTC',
-        //     info: [
-        //       ,
-        //       {
-        //         vol: 0,
-        //         ask: 0,
-        //         bid: 0,
-        //         exchange: 'OKx'
-        //       },
-        //       ,
-        //       {
-        //         vol: 0,
-        //         ask: 0,
-        //         bid: 0,
-        //         exchange: 'bybit'
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     name: 'BTC',
-        //     info: [
-        //       {
-        //         vol: 0,
-        //         ask: 0,
-        //         bid: 0,
-        //         exchange: 'ByBit'
-        //       },
-        //       {
-        //         vol: 0,
-        //         ask: 0,
-        //         bid: 0,
-        //         exchange: 'OKx'
-        //       }
-        //     ]
-        //   }
-
-        // ]
-        console.log(coin)
+        let found
         for (let key in full_data) {
           if (full_data.hasOwnProperty(key)) {
             let value = full_data[key];
-
-            let found = value.find(res => {
+            found = value.find(res => {
               if (res.coin === coin) {
-                // console.log()
+
                 return res
               }
             })
-            found.exchange = `${key}`;
-            coin_to_be_arranged.push(found);
+            if (found) {
+              found.exchange = `${key}`;
+              coin_to_be_arranged.push(found);
+            }
+
           }
         }
-        coin_arranged.push(findHighestAndLowestPrices(coin_to_be_arranged))
-        coin_to_be_arranged = []
+        if (found) {
+          coin_arranged.push(findHighestAndLowestPrices(coin_to_be_arranged))
+          coin_to_be_arranged = []
+        }
       }
-
-
-
-      // console.log(coin_arranged)
 
       return coin_arranged;
     } catch (err) {
-      // this.logger.log(coin_arranged)
-      this.logger.error(err)
+      throw new BadRequestException(err);
     }
 
   }

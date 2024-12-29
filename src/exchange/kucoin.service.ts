@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
 import {
-  exchangeList,
-  removeAllNonUSDTCoins,
+  exchangeList
 } from 'src/helpers/general/remusdt';
 
 @Injectable()
@@ -13,12 +12,29 @@ export class kucoinService {
     let data: any;
     try {
       data = await this.api.kucoinClient.getTickers();
-      const usefulldata = removeAllNonUSDTCoins(data.data);
+      const usefulldata = this.removeAllNonUSDTCoins(data.data.ticker);
+      
       return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
   }
+
+  /**
+   *
+   * @param apiData full data gotten from the api
+   */
+  removeAllNonUSDTCoins = (apiData: any) => {
+    const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
+      ticker.symbol.endsWith('USDT'),
+    );
+  
+    usdtTickers.forEach((obj) => {
+      obj.symbol = obj.symbol.replace('-USDT', '');
+    });
+  
+    return usdtTickers;
+  };
 
   private _getCoinPrices(useFulldata) {
 
@@ -28,10 +44,10 @@ export class kucoinService {
       prices.push(
         {
           coin: coins.symbol,
-          price: coins.lastPrice,
-          volume: coins.turnover24h,
-          askPrice: coins.ask1Price,
-          bidPrice: coins.bid1Price,
+          price: coins.last,
+          volume: coins.volValue,
+          askPrice: coins.bestAskSize,
+          bidPrice: coins.bestBidSize,
         }
       )
 

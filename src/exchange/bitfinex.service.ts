@@ -25,7 +25,6 @@ export class BitfinexService {
           }),
         ),
     );
-    console.log(JSON.stringify(data));
     return this.removeAllNonUSDTCoins(data);
   }
 
@@ -35,14 +34,21 @@ export class BitfinexService {
    */
   removeAllNonUSDTCoins = (apiData: any) => {
     const usdtTickers = apiData.filter((ticker: any) =>
-      ticker[0].endsWith('USDT'),
+      ticker[0].endsWith('USD'),
     );
 
     usdtTickers.forEach((obj) => {
-      obj.currency_pair = obj.currency_pair.replace('USDT', '');
+      obj[0] = obj[0].replace('USD', '');
+    });
+    const filteredArray = usdtTickers.filter(
+      (item) => !(typeof item[0] === "string" && item[0].includes("TEST"))
+    );
+
+    filteredArray.forEach((obj) => {
+      obj[0] = obj[0].replace('t', '');
     });
 
-    return this._getCoinPrices(usdtTickers);
+    return this._getCoinPrices(filteredArray);
   };
 
   private _getCoinPrices(useFulldata) {
