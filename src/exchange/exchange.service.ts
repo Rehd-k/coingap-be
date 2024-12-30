@@ -43,10 +43,19 @@ export class ExchangeService {
   async getChangesList() {
     let coin_to_be_arranged = []
     let coin_arranged = []
+
+    function getPercentageDifference(oldPrice, newPrice) {
+      if (oldPrice === 0) {
+        throw new Error("Old price cannot be zero.");
+      }
+      const difference = Math.abs(newPrice - oldPrice);
+      const percentageDifference = (difference / oldPrice) * 100;
+      return percentageDifference.toFixed(2); // Format to 2 decimal places
+    }
     try {
       // mexc, phomex, poloniex ,
       const [
-        okx, 
+        okx,
         bybit,
         kraken,
         bitfinex,
@@ -54,8 +63,8 @@ export class ExchangeService {
         huobi,
         kucoin,
         mexc,
-        phomex,
-        poloniex
+        // phomex,
+        // poloniex
       ] = await Promise.all([
         this.byBit.getCoinData(),
         this.okx.getCoinData(),
@@ -67,8 +76,8 @@ export class ExchangeService {
         this.Huobi.getCoinData(),
         this.kucoin.getCoinData(),
         this.Mexc.getCoinData(),
-        ['this.phomex.getCoins()'],
-        ['this.Poloniex.getCoinData()']
+        // ['this.phomex.getCoins()'],
+        // ['this.Poloniex.getCoinData()']
         // this.bitstamp.getCoins(),
         // this.coinBase.getCoinData(),
 
@@ -90,12 +99,12 @@ export class ExchangeService {
         huobi,
         kucoin,
         mexc,
-        phomex,
+        // phomex,
 
       }
 
       // return full_data
-     //  phomex, poloniex 
+      //  phomex, poloniex 
 
 
       const findHighestAndLowestPrices = (array) => {
@@ -113,7 +122,28 @@ export class ExchangeService {
           }
         }
 
-        return { sell_at: highest, buy_from: lowest };
+        let value = {
+          coins: `${highest.coin}/USDT`,
+          diff: getPercentageDifference(highest.price, lowest.price),
+          sell_at: {
+            "coin": highest.coin,
+            "price": Number(highest.price).toFixed(5),
+            "volume": Number(highest.volume).toFixed(5),
+            "askPrice": Number(highest.askPrice).toFixed(5),
+            "bidPrice": Number(highest.bidPrice).toFixed(5),
+            "exchange": highest.exchange
+          },
+          buy_from: {
+            "coin": `${lowest.coin}/USDT`,
+            "price": Number(lowest.price).toFixed(5),
+            "volume": Number(lowest.volume).toFixed(5),
+            "askPrice": Number(lowest.askPrice).toFixed(5),
+            "bidPrice": Number(lowest.bidPrice).toFixed(5),
+            "exchange": lowest.exchange
+          }
+        }
+
+        return value;
       };
 
       for (const coin of coins) {
@@ -140,7 +170,7 @@ export class ExchangeService {
         }
       }
 
-      return coin_arranged;
+      return coin_arranged.sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff));
     } catch (err) {
       throw new BadRequestException(err);
     }
