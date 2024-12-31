@@ -4,7 +4,6 @@ import { catchError, firstValueFrom } from 'rxjs';
 import * as fs from 'fs';
 
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
-import { exchangeList } from 'src/helpers/general/remusdt';
 type ApiResponse = {
   result: {
     [key: string]: {

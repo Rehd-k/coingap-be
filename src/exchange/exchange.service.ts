@@ -2,30 +2,31 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BinanceService } from './binance.service';
 import { OkxService } from './okx.service';
 import { BybitService } from './bybit.service';
-import { handleExchanges } from 'src/helpers/general/remusdt';
 import { KrakenService } from './kraken.service';
 import { cryptoExchanges } from 'src/helpers/general/exchanges';
 import { BitfinexService } from './bitfinex.service';
 import { BitstampService } from './bitstamp.service';
-import { CoinbaseService } from './coinbasepro.service';
 import { CryptodotcomService } from './cyptodotcom.service';
 import { GateioService } from './gateio.service';
 import { HuobiService } from './huobi.service';
 import { kucoinService } from './kucoin.service';
 import { MexcService } from './mexc.service';
-import { PhemexClient } from './phemex.service';
+// import { PhemexClient } from './phemex.service';
 import { PoloniexService } from './poloniex.service';
 import { forkJoin } from 'rxjs';
 import { coins } from 'src/helpers/general/coins';
+import { ExmoService } from './exmo.service';
+import { PhemexService } from './phemex.service';
+import { BitgetService } from './bitget.service';
 
 @Injectable()
 export class ExchangeService {
   constructor(
-    private binance: BinanceService,
+    // private binance: BinanceService,
     private bitfinex: BitfinexService,
     private bitstamp: BitstampService,
     private byBit: BybitService,
-    // private coinBase: CoinbaseService,
+    private bigGet: BitgetService,
     private cryptoDotCom: CryptodotcomService,
     private Gateio: GateioService,
     private Huobi: HuobiService,
@@ -33,8 +34,9 @@ export class ExchangeService {
     private kucoin: kucoinService,
     private Mexc: MexcService,
     private okx: OkxService,
-    private phomex: PhemexClient,
-    private Poloniex: PoloniexService
+    private phemex: PhemexService,
+    private Poloniex: PoloniexService,
+    private exmo: ExmoService
   ) {
 
   }
@@ -53,37 +55,39 @@ export class ExchangeService {
       return percentageDifference.toFixed(2); // Format to 2 decimal places
     }
     try {
-      // mexc, phomex, poloniex ,
       const [
-        okx,
         bybit,
-        kraken,
         bitfinex,
+        bitstamp,
+        exmo,
+        bitget,
+        // poloniex
+        okx,
+        kraken,
         gateio,
         huobi,
         kucoin,
         mexc,
-        // phomex,
-        // poloniex
+        cryptodotcom,
+        // binance
       ] = await Promise.all([
         this.byBit.getCoinData(),
+        this.bitfinex.getCoins(),
+        this.bitstamp.getCoins(),
+        this.exmo.getTicker(),
+        this.bigGet.getCoinData(),
         this.okx.getCoinData(),
         this.kraken.getCoins(),
         // this.binance.getCoinData(),
-
-        this.bitfinex.getCoins(),
         this.Gateio.getCoinData(),
         this.Huobi.getCoinData(),
         this.kucoin.getCoinData(),
         this.Mexc.getCoinData(),
-        // ['this.phomex.getCoins()'],
+        this.cryptoDotCom.getCoins(),
+
+
         // ['this.Poloniex.getCoinData()']
-        // this.bitstamp.getCoins(),
         // this.coinBase.getCoinData(),
-
-
-        // ,
-        // 
         // this.phomex.getCoins(),
         // this.Poloniex.getCoinData()
       ]);
@@ -91,21 +95,20 @@ export class ExchangeService {
 
 
       const full_data = {
-        okx,
         bybit,
-        kraken,
         bitfinex,
+        bitstamp,
+        exmo,
+        bitget,
+        // poloniex
+        okx,
+        kraken,
         gateio,
         huobi,
         kucoin,
         mexc,
-        // phomex,
-
+        cryptodotcom,
       }
-
-      // return full_data
-      //  phomex, poloniex 
-
 
       const findHighestAndLowestPrices = (array) => {
         if (array.length === 0) return { highest: null, lowest: null };
@@ -123,7 +126,7 @@ export class ExchangeService {
         }
 
         let value = {
-          coins: `${highest.coin}/USDT`,
+          coins: `${highest.coin}`,
           diff: getPercentageDifference(highest.price, lowest.price),
           sell_at: {
             "coin": highest.coin,
@@ -134,7 +137,7 @@ export class ExchangeService {
             "exchange": highest.exchange
           },
           buy_from: {
-            "coin": `${lowest.coin}/USDT`,
+            "coin": lowest.coin,
             "price": Number(lowest.price).toFixed(5),
             "volume": Number(lowest.volume).toFixed(5),
             "askPrice": Number(lowest.askPrice).toFixed(5),
@@ -151,8 +154,9 @@ export class ExchangeService {
         for (let key in full_data) {
           if (full_data.hasOwnProperty(key)) {
             let value = full_data[key];
+
             found = value.find(res => {
-              if (res.coin === coin) {
+              if (res.coin.split('/')[0] === coin) {
 
                 return res
               }
@@ -169,6 +173,7 @@ export class ExchangeService {
           coin_to_be_arranged = []
         }
       }
+      console.log(coin_arranged)
 
       return coin_arranged.sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff));
     } catch (err) {

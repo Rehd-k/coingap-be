@@ -1,8 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
-import {
-  exchangeList
-} from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class kucoinService {

@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
-import { exchangeList } from 'src/helpers/general/remusdt';
 
 export class PoloniexService {
   constructor(private api: ApiServices) { }

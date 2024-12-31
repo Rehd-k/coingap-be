@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
-// import { MainClient } from 'binance';
+import { MainClient } from 'binance';
 import { RestClientV5 } from 'bybit-api';
 import { RestClient } from 'okx-api';
 import { RestClientV2 } from 'bitget-api';
 import { SpotClient } from 'kucoin-api';
 import { RestClient as RestClientGate } from 'gateio-api';
-// import { CoinbasePro } from 'coinbase-pro-node';
 import { HuobiSDK } from 'node-huobi-sdk';
 import * as Mexc from 'mexc-api-sdk';
 import * as Poloniex from 'poloniex-api-node';
 
 @Injectable()
 export class ApiServices {
-  constructor() {}
-  // binanceClient = new MainClient({
-  //   api_key: process.env.binance_api_key,
-  //   api_secret: process.env.binance_secret_key,
-  // });
+  constructor() { }
+  binanceClient = new MainClient({
+    api_key: process.env.binance_api_key,
+    api_secret: process.env.binance_secret_key,
+  });
 
   byBitClient = new RestClientV5({
     key: process.env.bybit_key,
@@ -55,8 +54,8 @@ export class ApiServices {
   //   apiKey: '',
   //   apiSecret: '',
   //   passphrase: '',
-  //   // The Sandbox is for testing only and offers a subset of the products/assets:
-  //   // https://docs.cloud.coinbase.com/exchange/docs#sandbox
+  //   The Sandbox is for testing only and offers a subset of the products/assets:
+  //   https://docs.cloud.coinbase.com/exchange/docs#sandbox
   //   useSandbox: true,
   // });
 

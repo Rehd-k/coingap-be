@@ -1,86 +1,63 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:393955637.
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException } from '@nestjs/common';
-import { catchError, firstValueFrom } from 'rxjs';
-import { ApiServices } from 'src/helpers/apiConnectors/apis';
-import { exchangeList } from 'src/helpers/general/remusdt';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { lastValueFrom } from 'rxjs';
 
-export class PhemexClient {
-  constructor(
-    private httpService: HttpService,
-    private api: ApiServices,
-  ) { }
+@Injectable()
+export class PhemexService {
+    constructor(private readonly httpService: HttpService) { }
 
-  async getCoins() {
-    
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get('https://api.phemex.com/md/spot/ticker/24hr/all', {
-          maxContentLength: Infinity,
-          headers: {
-            Accept: 'application/json',
-          },
-        })
-        .pipe(
-          catchError((error: any) => {
-            throw new BadRequestException(error);
-          }),
-        ),
-    );
-    console.log(data)
-  
-    return this.removeAllNonUSDTCoins(data.result);
-  }
-
-  /**
-   *
-   * @param apiData full data gotten from the api
-   */
-  removeAllNonUSDTCoins = (apiData: any) => {
-    console.log(apiData)
-    const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('USDT'),
-    );
-
-
-    usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('USDT', '');
-    });
-
-    return this._getCoinPrices(usdtTickers);
-  };
-
-  private _getCoinPrices(useFulldata) {
-
-
-    let prices = []
-
-    useFulldata.map((coins) => {
-      prices.push(
-        {
-          coin: coins.symbol,
-          price: coins.lastEp,
-          volume: coins.turnoverEv,
-          askPrice: coins.askEp,
-          bidPrice: coins.bidEp,
+    async getTicker(): Promise<any> {
+        try {
+            const url = `https://api.phemex.com/md/spot/ticker/24hr/all`;
+            const { data } = await lastValueFrom(this.httpService.get(url));
+            if (data.error) throw new BadRequestException(data.error);
+            return this.removeAllNonUSDTCoins(data.result);
+        } catch (err) {
+            throw new BadRequestException(err)
         }
-      )
 
-    });
-    return prices
+    }
 
+    removeAllNonUSDTCoins = (apiData: any) => {
+        const regex = /USD[a-zA-Z]?$/;
+        const usdtTickers = apiData.filter((ticker: any) =>
+            // ticker[0].endsWith('USD'),
+            regex.test(ticker.symbol)
+        );
 
-    // useFulldata.map((coins) => {
-    //   exchangeList.map((res) => {
-    //     if (res.name === 'Phemex') {
-    //       res.info.push({
-    //         coin: coins.symbol,
-    //         price: coins.lastEp,
-    //         volume: coins.turnoverEv,
-    //         askPrice: coins.askEp,
-    //         bidPrice: coins.bidEp,
-    //       });
-    //     }
-    //   });
-    // });
-  }
+        usdtTickers.forEach((obj) => {
+            obj[0] = obj[0].replace('s', '');
+        });
+
+        usdtTickers.forEach((obj) => {
+            obj.symbol = obj.symbol.replace('USD', '/USD');
+        });
+        return this._getCoinPrices(usdtTickers);
+    };
+
+    private _getCoinPrices(useFulldata) {
+        let priceses = [];
+        useFulldata.map((coins) => {
+            priceses.push({
+                coin: coins.symbol,
+                price: coins[7],
+                volume: coins[8],
+                askPrice: coins[3],
+                bidPrice: coins[1],
+            })
+            // exchangeList.map((res) => {
+            //   if (res.name === 'Bitfinex') {
+            //     res.info.push({
+            //       coin: coins[0],
+            //       price: coins[7],
+            //       volume: coins[8],
+            //       askPrice: coins[3],
+            //       bidPrice: coins[1],
+            //     });
+            //   }
+            // });
+        });
+        return priceses
+    }
 }

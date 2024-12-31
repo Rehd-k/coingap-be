@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { firstValueFrom, catchError } from 'rxjs';
-import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class CryptodotcomService {
@@ -30,12 +29,13 @@ export class CryptodotcomService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { i: string }) =>
-      ticker.i.endsWith('USDT'),
+     regex.test(ticker.i)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.i = obj.i.replace('-USDT', '');
+      obj.i = obj.i.replace('_USD', '/USD');
     });
 
     return this._getCoinPrices(usdtTickers);
@@ -48,9 +48,9 @@ export class CryptodotcomService {
       prices.push(
         {
           coin: coins.i,
-          price: coins.a,
+          price: coins.k,
           volume: coins.vv,
-          askPrice: coins.k,
+          askPrice: coins.a,
           bidPrice: coins.b,
         }
       )

@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { catchError, firstValueFrom } from 'rxjs';
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
-import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class BitfinexService {
@@ -33,12 +32,14 @@ export class BitfinexService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: any) =>
-      ticker[0].endsWith('USD'),
+      // ticker[0].endsWith('USD'),
+      regex.test(ticker[0])
     );
 
     usdtTickers.forEach((obj) => {
-      obj[0] = obj[0].replace('USD', '');
+      obj[0] = obj[0].replace('USD', '/USD');
     });
     const filteredArray = usdtTickers.filter(
       (item) => !(typeof item[0] === "string" && item[0].includes("TEST"))

@@ -3,12 +3,14 @@
  * @param apiData full data gotten from the api if the coin holder is called symbol
  */
 export const removeAllNonUSDTCoins = (apiData: any) => {
+  const regex = /USD[a-zA-Z]?$/;
   const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-    ticker.symbol.endsWith('USDT'),
+    regex.test(ticker.symbol)
+    // .endsWith('USDT'),
   );
 
   usdtTickers.forEach((obj) => {
-    obj.symbol = obj.symbol.replace('USDT', '');
+    obj.symbol = obj.symbol.replace('USD', '/USD');
   });
 
   return usdtTickers;
@@ -24,11 +26,6 @@ type CoinsType = {
     bidPrice: number;
   }[];
 };
-export let exchangeList: CoinsType[] = [];
-export function handleExchanges(data) {
-  exchangeList = data;
-}
-
 
 // [
         //   {

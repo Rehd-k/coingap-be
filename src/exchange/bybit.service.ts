@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ApiServices } from 'src/helpers/apiConnectors/apis';
 import {
-  exchangeList,
   removeAllNonUSDTCoins,
 } from 'src/helpers/general/remusdt';
 import * as fs from 'fs';
@@ -30,14 +29,6 @@ export class BybitService {
       // console.log(data)
       const usefulldata = removeAllNonUSDTCoins(data.data.result.list);
       return this._getCoinPrices(usefulldata);
-
-
-      // this.api.byBitClient.getTickers({
-      //   category: 'spot',
-      // });
-      // this.logger.log(data);
-      // const usefulldata = removeAllNonUSDTCoins(data.result.list);
-      // return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -59,21 +50,5 @@ export class BybitService {
 
     });
     return prices
-    // useFulldata.map((coins) => {
-    //   exchangeList.forEach((res) => {
-    //     if (res.name === 'Bybit') {
-    //       res.info.push({
-    //         coin: coins.symbol,
-    //         price: coins.lastPrice,
-    //         volume: coins.turnover24h,
-    //         askPrice: coins.ask1Price,
-    //         bidPrice: coins.bid1Price,
-    //       });
-    //     }
-    //   });
-    //   console.log(JSON.stringify(exchangeList));
-    // });
-
-
   }
 }

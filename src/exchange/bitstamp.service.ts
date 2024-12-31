@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { catchError, firstValueFrom } from 'rxjs';
-import { exchangeList } from 'src/helpers/general/remusdt';
 
 @Injectable()
 export class BitstampService {
@@ -10,7 +9,7 @@ export class BitstampService {
   async getCoins() {
     const { data } = await firstValueFrom(
       this.httpService
-        .get('https://api.kraken.com/0/public/Ticker', {
+        .get('https://www.bitstamp.net/api/v2/ticker/', {
           maxContentLength: Infinity,
           headers: {
             Accept: 'application/json',
@@ -22,7 +21,7 @@ export class BitstampService {
           }),
         ),
     );
-    return this._getCoinPrices(data);
+    return this.removeAllNonUSDTCoins(data);
   }
 
   /**
@@ -30,13 +29,15 @@ export class BitstampService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { pair: string }) =>
-      ticker.pair.endsWith('USDT'),
+      // ticker.pair.endsWith('USDT'),
+      regex.test(ticker.pair)
     );
 
-    usdtTickers.forEach((obj) => {
-      obj.pair = obj.pair.replace('/USDT', '');
-    });
+    // usdtTickers.forEach((obj) => {
+    //   obj.pair = obj.pair.replace('/USDT', '');
+    // });
 
     return this._getCoinPrices(usdtTickers);
   };
