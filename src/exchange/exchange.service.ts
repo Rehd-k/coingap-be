@@ -110,6 +110,8 @@ export class ExchangeService {
         cryptodotcom,
       }
 
+      // return full_data
+
       const findHighestAndLowestPrices = (array) => {
         if (array.length === 0) return { highest: null, lowest: null };
 
@@ -169,13 +171,12 @@ export class ExchangeService {
           }
         }
         if (found) {
-          coin_arranged.push(findHighestAndLowestPrices(coin_to_be_arranged))
+          coin_arranged.push((coin_to_be_arranged))
           coin_to_be_arranged = []
         }
       }
-      console.log(coin_arranged)
-
-      return coin_arranged.sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff));
+      // .sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff))
+      return coin_arranged;
     } catch (err) {
       throw new BadRequestException(err);
     }

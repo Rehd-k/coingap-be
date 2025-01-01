@@ -21,16 +21,19 @@ export class HuobiService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /usd[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('usdt'),
+      // ticker.symbol.endsWith('usdt'),
+      regex.test(ticker.symbol)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('usdt', '');
+      obj.symbol = obj.symbol.replace('usd', '/usd');
+      obj.symbol = obj.symbol.toUpperCase()
     });
 
-    
-  
+
+
     return usdtTickers;
   };
 
@@ -41,10 +44,10 @@ export class HuobiService {
       prices.push(
         {
           coin: coins.symbol,
-          price: coins.close,
-          volume: coins.vol,
-          askPrice: coins.ask,
-          bidPrice: coins.bid,
+          price: `${coins.close}`,
+          volume: `${coins.vol}`,
+          askPrice: `${coins.ask}`,
+          bidPrice: `${coins.bid}`,
         }
       )
 

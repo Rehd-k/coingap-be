@@ -21,14 +21,17 @@ export class OkxService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins(apiData: any) {
+    const regex = /USD[a-zA-Z]?$/;
+  
     const usdtTickers = apiData.filter((ticker: { instId: string }) =>
-      ticker.instId.endsWith('USDT'),
+      // ticker.instId.endsWith('USDT'),
+      regex.test(ticker.instId)
     );
 
 
 
     usdtTickers.forEach((obj) => {
-      obj.instId = obj.instId.replace('-USDT', '');
+      obj.instId = obj.instId.replace('-USD', '/USD');
     });
     return usdtTickers;
   }

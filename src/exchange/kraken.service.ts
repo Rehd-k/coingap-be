@@ -52,12 +52,12 @@ export class KrakenService {
    */
   transformApiResponse(response: ApiResponse) {
     const transformed: TransformedData = [];
-
+    const regex = /USD[a-zA-Z]?$/;
     Object.entries(response.result).forEach(([coinPair, data]) => {
       // Only process pairs that end with "USDT"
-      if (coinPair.endsWith('USDT')) {
+      if (regex.test(coinPair)) {
         // Remove "USDT" and keep the first part of the pair
-        const coin = coinPair.replace('USDT', '');
+        const coin = coinPair.replace('USD', '/USD');
 
         // Extract necessary fields
         const price = data.c[0]; // "c" represents price
@@ -82,12 +82,5 @@ export class KrakenService {
 
    
     return prices
-    // exchangeList.map((res) => {
-    //   if (res.name === 'OKX') {
-    //     res.info = useFulldata;
-    //   }
-    // });
-    // console.log(exchangeList);
-
   }
 }

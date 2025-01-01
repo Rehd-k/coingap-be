@@ -20,12 +20,14 @@ export class MexcService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('USDT'),
+      // ticker.symbol.endsWith('USDT'),
+    regex.test(ticker.symbol)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('USDT', '');
+      obj.symbol = obj.symbol.replace('USD', '/USD');
     });
 
     return this._getCoinPrices(usdtTickers);

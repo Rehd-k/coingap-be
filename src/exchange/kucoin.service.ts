@@ -3,14 +3,14 @@ import { ApiServices } from 'src/helpers/apiConnectors/apis';
 
 @Injectable()
 export class kucoinService {
-  constructor(private api: ApiServices) {}
+  constructor(private api: ApiServices) { }
 
   async getCoinData() {
     let data: any;
     try {
       data = await this.api.kucoinClient.getTickers();
       const usefulldata = this.removeAllNonUSDTCoins(data.data.ticker);
-      
+
       return this._getCoinPrices(usefulldata);
     } catch (err) {
       throw new BadRequestException(err);
@@ -22,14 +22,16 @@ export class kucoinService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      ticker.symbol.endsWith('USDT'),
+      // ticker.symbol.endsWith('USDT'),
+      regex.test(ticker.symbol)
     );
-  
+
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('-USDT', '');
+      obj.symbol = obj.symbol.replace('-USD', '/USD');
     });
-  
+
     return usdtTickers;
   };
 

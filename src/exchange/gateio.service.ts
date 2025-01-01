@@ -20,12 +20,14 @@ export class GateioService {
    * @param apiData full data gotten from the api
    */
   removeAllNonUSDTCoins = (apiData: any) => {
+    const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { currency_pair: string }) =>
-      ticker.currency_pair.endsWith('USDT'),
+      // ticker.currency_pair.endsWith('USDT'),
+    regex.test(ticker.currency_pair)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.currency_pair = obj.currency_pair.replace('_USDT', '');
+      obj.currency_pair = obj.currency_pair.replace('_USD', '/USD');
     });
 
     return usdtTickers;
