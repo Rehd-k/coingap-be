@@ -24,14 +24,14 @@ export class OkxService {
     const regex = /USD[a-zA-Z]?$/;
   
     const usdtTickers = apiData.filter((ticker: { instId: string }) =>
-      // ticker.instId.endsWith('USDT'),
-      regex.test(ticker.instId)
+      ticker.instId.endsWith('USDT')
+      // regex.test(ticker.instId)
     );
 
 
 
     usdtTickers.forEach((obj) => {
-      obj.instId = obj.instId.replace('-USD', '/USD');
+      obj.instId = obj.instId.replace('-USDT', '');
     });
     return usdtTickers;
   }

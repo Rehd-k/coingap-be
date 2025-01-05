@@ -31,13 +31,13 @@ export class BitstampService {
   removeAllNonUSDTCoins = (apiData: any) => {
     const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { pair: string }) =>
-      // ticker.pair.endsWith('USDT'),
-      regex.test(ticker.pair)
+      ticker.pair.endsWith('USDT'),
+      // regex.test(ticker.pair)
     );
 
-    // usdtTickers.forEach((obj) => {
-    //   obj.pair = obj.pair.replace('/USDT', '');
-    // });
+    usdtTickers.forEach((obj) => {
+      obj.pair = obj.pair.replace('/USDT', '');
+    });
 
     return this._getCoinPrices(usdtTickers);
   };

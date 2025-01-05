@@ -57,7 +57,7 @@ export class ExchangeService {
     try {
       const [
         bybit,
-        bitfinex,
+        // bitfinex,
         bitstamp,
         exmo,
         bitget,
@@ -72,7 +72,7 @@ export class ExchangeService {
         // binance
       ] = await Promise.all([
         this.byBit.getCoinData(),
-        this.bitfinex.getCoins(),
+        // this.bitfinex.getCoins(),
         this.bitstamp.getCoins(),
         this.exmo.getTicker(),
         this.bigGet.getCoinData(),
@@ -96,7 +96,7 @@ export class ExchangeService {
 
       const full_data = {
         bybit,
-        bitfinex,
+        // bitfinex,
         bitstamp,
         exmo,
         bitget,
@@ -110,7 +110,17 @@ export class ExchangeService {
         cryptodotcom,
       }
 
-      // return full_data
+      function sortPriceData(data) {
+        return data.map(subArray => {
+          const sortedByPrice = subArray.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+          return {
+            coins: `${sortedByPrice[sortedByPrice.length - 1].coin}`,
+            diff: getPercentageDifference(sortedByPrice[sortedByPrice.length - 1].price, sortedByPrice[0].price),
+            sell_at: sortedByPrice[sortedByPrice.length - 1],
+            buy_from: sortedByPrice[0]
+          };
+        });
+      }
 
       const findHighestAndLowestPrices = (array) => {
         if (array.length === 0) return { highest: null, lowest: null };
@@ -152,17 +162,23 @@ export class ExchangeService {
       };
 
       for (const coin of coins) {
-        let found
+
         for (let key in full_data) {
           if (full_data.hasOwnProperty(key)) {
             let value = full_data[key];
+            let found
+            // found = value.find(res => {
+            //   if (res.coin.split('/')[0] === coin) {
 
-            found = value.find(res => {
-              if (res.coin.split('/')[0] === coin) {
+            //     return res
+            //   }
+            // })
 
-                return res
+            for (const iterator of value) {
+              if (iterator.coin === coin) {
+                found = iterator
               }
-            })
+            }
             if (found) {
               found.exchange = `${key}`;
               coin_to_be_arranged.push(found);
@@ -170,13 +186,14 @@ export class ExchangeService {
 
           }
         }
-        if (found) {
+        if (coin_to_be_arranged.length > 0) {
           coin_arranged.push((coin_to_be_arranged))
           coin_to_be_arranged = []
         }
       }
-      // .sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff))
-      return coin_arranged;
+
+      return sortPriceData(coin_arranged).sort((a, b) => parseFloat(b.diff) - parseFloat(a.diff))
+
     } catch (err) {
       throw new BadRequestException(err);
     }

@@ -31,11 +31,12 @@ export class CryptodotcomService {
   removeAllNonUSDTCoins = (apiData: any) => {
     const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { i: string }) =>
-     regex.test(ticker.i)
+    //  regex.test(ticker.i)
+    ticker.i.endsWith('USDT')
     );
 
     usdtTickers.forEach((obj) => {
-      obj.i = obj.i.replace('_USD', '/USD');
+      obj.i = obj.i.replace('_USDT', '');
     });
 
     return this._getCoinPrices(usdtTickers);

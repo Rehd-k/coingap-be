@@ -7,7 +7,7 @@ import { SpotClient } from 'kucoin-api';
 import { RestClient as RestClientGate } from 'gateio-api';
 import { HuobiSDK } from 'node-huobi-sdk';
 import * as Mexc from 'mexc-api-sdk';
-import * as Poloniex from 'poloniex-api-node';
+// import * as Poloniex from 'poloniex-api-node';
 
 @Injectable()
 export class ApiServices {
@@ -70,5 +70,5 @@ export class ApiServices {
 
   mexcClient = new Mexc.Spot('apiKey', 'apiSecret');
 
-  poloniexClient = new Poloniex({ apiKey: 'myKey', apiSecret: 'mySecret' });
+  // poloniexClient = new Poloniex({ apiKey: 'myKey', apiSecret: 'mySecret' });
 }

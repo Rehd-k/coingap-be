@@ -294,4 +294,4 @@ export const coins = [
   'WIFI',
   'STX',
   'ZRO',
-];
+].sort();

@@ -22,12 +22,12 @@ export class MexcService {
   removeAllNonUSDTCoins = (apiData: any) => {
     const regex = /USD[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      // ticker.symbol.endsWith('USDT'),
-    regex.test(ticker.symbol)
+      ticker.symbol.endsWith('USDT')
+    // regex.test(ticker.symbol)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('USD', '/USD');
+      obj.symbol = obj.symbol.replace('USDT', '');
     });
 
     return this._getCoinPrices(usdtTickers);

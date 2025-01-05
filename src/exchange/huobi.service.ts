@@ -23,12 +23,12 @@ export class HuobiService {
   removeAllNonUSDTCoins = (apiData: any) => {
     const regex = /usd[a-zA-Z]?$/;
     const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-      // ticker.symbol.endsWith('usdt'),
-      regex.test(ticker.symbol)
+      ticker.symbol.endsWith('usdt')
+      // regex.test(ticker.symbol)
     );
 
     usdtTickers.forEach((obj) => {
-      obj.symbol = obj.symbol.replace('usd', '/usd');
+      obj.symbol = obj.symbol.replace('usdt', '');
       obj.symbol = obj.symbol.toUpperCase()
     });
 

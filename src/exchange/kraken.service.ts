@@ -55,9 +55,10 @@ export class KrakenService {
     const regex = /USD[a-zA-Z]?$/;
     Object.entries(response.result).forEach(([coinPair, data]) => {
       // Only process pairs that end with "USDT"
-      if (regex.test(coinPair)) {
+      // regex.test(coinPair)
+      if (coinPair.endsWith('USDT')) {
         // Remove "USDT" and keep the first part of the pair
-        const coin = coinPair.replace('USD', '/USD');
+        const coin = coinPair.replace('USDT', '');
 
         // Extract necessary fields
         const price = data.c[0]; // "c" represents price

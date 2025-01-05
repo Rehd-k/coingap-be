@@ -39,9 +39,10 @@ export class ExmoService {
     removeAllNonUSDTCoins(data) {
         const regex = /USD[a-zA-Z]?$/; // Matches keys ending with 'USD'
         const transformedData = Object.keys(data)
-            .filter(key => regex.test(key)) // Filter keys that match the regex
+        // .filter(key => regex.test(key)) 
+            .filter(key => key.endsWith('USDT'))// Filter keys that match the regex
             .map(key => {
-                const symbol = key.replace('_USD', '/USD'); // Replace '_USD' with '/USD'
+                const symbol = key.replace('_USDT', ''); // Replace '_USD' with '/USD'
                 const coin = data[key];
                 return {
                     coin: symbol,

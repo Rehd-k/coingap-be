@@ -5,12 +5,12 @@
 export const removeAllNonUSDTCoins = (apiData: any) => {
   const regex = /USD[a-zA-Z]?$/;
   const usdtTickers = apiData.filter((ticker: { symbol: string }) =>
-    regex.test(ticker.symbol)
-    // .endsWith('USDT'),
+    // regex.test(ticker.symbol)
+  ticker.symbol.endsWith('USDT'),
   );
 
   usdtTickers.forEach((obj) => {
-    obj.symbol = obj.symbol.replace('USD', '/USD');
+    obj.symbol = obj.symbol.replace('USDT', '');
   });
 
   return usdtTickers;
