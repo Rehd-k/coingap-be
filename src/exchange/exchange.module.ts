@@ -18,6 +18,7 @@ import { PhemexService } from './phemex.service';
 import { PoloniexService } from './poloniex.service';
 import { MarketsController } from 'src/markets/markets.controller';
 import { ExmoService } from './exmo.service';
+import { CoinInfoService } from './coininfo.service';
 
 @Module({
   providers: [
@@ -38,7 +39,8 @@ import { ExmoService } from './exmo.service';
     MexcService,
     PhemexService,
     PoloniexService,
-    ExmoService
+    ExmoService,
+    CoinInfoService
   ],
   imports: [HttpModule],
   controllers: [MarketsController],

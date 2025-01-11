@@ -8,7 +8,7 @@ export class OkxService {
   async getCoinData() {
     let data: any;
     try {
-      data = await this.api.okxClient.getTickers('SPOT');
+      data = await this.api.okxClient.getTicker('SPOT');
       const usefulldata = this.removeAllNonUSDTCoins(data);
       return this._getCoinPrices(usefulldata);
     } catch (err) {

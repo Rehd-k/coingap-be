@@ -58,32 +58,32 @@ export class ExchangeService {
       const [
         bybit,
         // bitfinex,
-        bitstamp,
-        exmo,
+        // bitstamp,
+        // exmo,
         bitget,
         // poloniex
-        okx,
-        kraken,
-        gateio,
+        // okx,
+        // kraken,
+        // gateio,
         huobi,
-        kucoin,
+        // kucoin,
         mexc,
-        cryptodotcom,
+        // cryptodotcom,
         // binance
       ] = await Promise.all([
         this.byBit.getCoinData(),
         // this.bitfinex.getCoins(),
-        this.bitstamp.getCoins(),
-        this.exmo.getTicker(),
+        // this.bitstamp.getCoins(),
+        // this.exmo.getTicker(),
         this.bigGet.getCoinData(),
-        this.okx.getCoinData(),
-        this.kraken.getCoins(),
+        // this.okx.getCoinData(),
+        // this.kraken.getCoins(),
         // this.binance.getCoinData(),
-        this.Gateio.getCoinData(),
+        // this.Gateio.getCoinData(),
         this.Huobi.getCoinData(),
-        this.kucoin.getCoinData(),
+        // this.kucoin.getCoinData(),
         this.Mexc.getCoinData(),
-        this.cryptoDotCom.getCoins(),
+        // this.cryptoDotCom.getCoins(),
 
 
         // ['this.Poloniex.getCoinData()']
@@ -97,17 +97,17 @@ export class ExchangeService {
       const full_data = {
         bybit,
         // bitfinex,
-        bitstamp,
-        exmo,
+        // bitstamp,
+        // exmo,
         bitget,
         // poloniex
-        okx,
-        kraken,
-        gateio,
+        // okx,
+        // kraken,
+        // gateio,
         huobi,
-        kucoin,
+        // kucoin,
         mexc,
-        cryptodotcom,
+        // cryptodotcom,
       }
 
       function sortPriceData(data) {
@@ -116,50 +116,26 @@ export class ExchangeService {
           return {
             coins: `${sortedByPrice[sortedByPrice.length - 1].coin}`,
             diff: getPercentageDifference(sortedByPrice[sortedByPrice.length - 1].price, sortedByPrice[0].price),
-            sell_at: sortedByPrice[sortedByPrice.length - 1],
-            buy_from: sortedByPrice[0]
+            sell_at: {
+              coin: sortedByPrice[sortedByPrice.length - 1].coin,
+              price: Number(sortedByPrice[sortedByPrice.length - 1].price).toFixed(5),
+              volume: Number(sortedByPrice[sortedByPrice.length - 1].volume).toFixed(5),
+              askPrice: Number(sortedByPrice[sortedByPrice.length - 1].askPrice).toFixed(5),
+              bidPrice: Number(sortedByPrice[sortedByPrice.length - 1].bidPrice).toFixed(5),
+              exchange: sortedByPrice[sortedByPrice.length - 1].exchange
+            },
+            buy_from: {
+              coin: sortedByPrice[0].coin,
+              price: Number(sortedByPrice[0].price).toFixed(5),
+              volume: Number(sortedByPrice[0].volume).toFixed(5),
+              askPrice: Number(sortedByPrice[0].askPrice).toFixed(5),
+              bidPrice: Number(sortedByPrice[0].bidPrice).toFixed(5),
+              exchange: sortedByPrice[0].exchange
+
+            }
           };
         });
       }
-
-      const findHighestAndLowestPrices = (array) => {
-        if (array.length === 0) return { highest: null, lowest: null };
-
-        let highest = array[0];
-        let lowest = array[0];
-
-        for (const item of array) {
-          if (item.price > highest.price) {
-            highest = item;
-          }
-          if (item.price < lowest.price) {
-            lowest = item;
-          }
-        }
-
-        let value = {
-          coins: `${highest.coin}`,
-          diff: getPercentageDifference(highest.price, lowest.price),
-          sell_at: {
-            "coin": highest.coin,
-            "price": Number(highest.price).toFixed(5),
-            "volume": Number(highest.volume).toFixed(5),
-            "askPrice": Number(highest.askPrice).toFixed(5),
-            "bidPrice": Number(highest.bidPrice).toFixed(5),
-            "exchange": highest.exchange
-          },
-          buy_from: {
-            "coin": lowest.coin,
-            "price": Number(lowest.price).toFixed(5),
-            "volume": Number(lowest.volume).toFixed(5),
-            "askPrice": Number(lowest.askPrice).toFixed(5),
-            "bidPrice": Number(lowest.bidPrice).toFixed(5),
-            "exchange": lowest.exchange
-          }
-        }
-
-        return value;
-      };
 
       for (const coin of coins) {
 
@@ -167,13 +143,6 @@ export class ExchangeService {
           if (full_data.hasOwnProperty(key)) {
             let value = full_data[key];
             let found
-            // found = value.find(res => {
-            //   if (res.coin.split('/')[0] === coin) {
-
-            //     return res
-            //   }
-            // })
-
             for (const iterator of value) {
               if (iterator.coin === coin) {
                 found = iterator

@@ -32,6 +32,42 @@ export class BitgetService {
     });
     return prices
   }
+
+  /**
+   * @function checks if that coin is withdrawal able by user and check fee and other things 
+   */
+  async checkExchangeStatus(coin: string) {
+    try {
+      const data = await this.api.bitgetClient.getSpotCoinInfo({ coin });
+      return this.arrengesData(data.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  private arrengesData(data) {
+    const mod_data = []
+    for (const i of data[0].chains) {
+      const res = {
+        chain: i.chain,
+        tags: i.needTag,
+        withdrawable: i.withdrawable === 'true' ? true : false,
+        rechargeable: i.rechargeable === 'true' ? true : false,
+        withdrawFee: i.withdrawFee,
+        congestion: i.congestion,
+        extraWithdrawFee: i.extraWithdrawFee,
+        depositConfirm: i.depositConfirm,
+        withdrawConfirm: i.withdrawConfirm,
+        minDepositAmount: i.minDepositAmount,
+        minWithdrawAmount: i.minWithdrawAmount
+      }
+      mod_data.push(res)
+    }
+    return mod_data
+  }
+
+
+
   /**
    * @function Checks if the trade is worth it
    * @returns Number expected profit
@@ -45,9 +81,6 @@ export class BitgetService {
     return 0
   };
 
-  checkExchangeStatus() {
-    
-  }
 
   // check if worth it (still figuring that out)
   // check if withdrawable in both exchanges buy_from and sell_at
