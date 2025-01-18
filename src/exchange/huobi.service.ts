@@ -5,7 +5,7 @@ import { ApiServices } from 'src/helpers/apiConnectors/apis';
 
 @Injectable()
 export class HuobiService {
-  constructor(private api: ApiServices, private HttpService : HttpService) { }
+  constructor(private api: ApiServices, private HttpService: HttpService) { }
   async getCoinData() {
     let data: any;
     try {
@@ -73,21 +73,22 @@ export class HuobiService {
     }
   }
 
-  private arrengesData  (data) {
+  private arrengesData(data) {
     const mod_data = []
     for (const i of data[0].chains) {
       const res = {
-        chain : i.baseChainProtocol ? i.baseChainProtocol : i.chain,
-        tags : i.addrDepositTag,
-        withdrawable : i.withdrawStatus === 'allowed' ? true : false,
-        rechargeable : i.depositStatus === 'allowed' ? true : false,
-        withdrawFee: i.transactFeeWithdraw,
-        congestion : data[0].instStatus,
-        extraWithdrawFee: i.extraWithdrawFee ? i.extraWithdrawFee : 0,
-        depositConfirm: i.numOfFastConfirmations ? `${i.numOfFastConfirmations} (FAST)`: i.numOfConfirmations,
-        withdrawConfirm: i.numOfFastConfirmations ? `${i.numOfFastConfirmations} (FAST)`: i.numOfConfirmations,
-        minDepositAmount : i.minDepositAmt,
-        minWithdrawAmount : i.minWithdrawAmt      
+        chain: i.baseChainProtocol ? i.baseChainProtocol : i.chain,
+        tags: i.addrDepositTag ? i.addrDepositTag : 'Unknown',
+        withdrawable: i.withdrawStatus === 'allowed' ? true : false,
+        rechargeable: i.depositStatus === 'allowed' ? true : false,
+        withdrawFee: i.transactFeeWithdraw ? i.transactFeeWithdraw : 'Unknown',
+        congestion: data[0].instStatus ? data[0].instStatus : 'Unknown',
+        extraWithdrawFee: i.extraWithdrawFee ? i.extraWithdrawFee : '0',
+        depositConfirm: i.numOfFastConfirmations ? `${i.numOfFastConfirmations} (FAST)` : i.numOfConfirmations,
+        withdrawConfirm: i.numOfFastConfirmations ? `${i.numOfFastConfirmations} (FAST)` : i.numOfConfirmations,
+        minDepositAmount: i.minDepositAmt ? i.minDepositAmt : '0',
+        minWithdrawAmount: i.minWithdrawAmt ? i.minWithdrawAmt : '0'
+
       }
       mod_data.push(res)
     }

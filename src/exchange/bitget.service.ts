@@ -49,17 +49,17 @@ export class BitgetService {
     const mod_data = []
     for (const i of data[0].chains) {
       const res = {
-        chain: i.chain,
-        tags: i.needTag,
+        chain: i.chain ? i.chain : 'Unknown',
+        tags: i.needTag ? i.needTag : 'Unknown',
         withdrawable: i.withdrawable === 'true' ? true : false,
         rechargeable: i.rechargeable === 'true' ? true : false,
-        withdrawFee: i.withdrawFee,
-        congestion: i.congestion,
-        extraWithdrawFee: i.extraWithdrawFee,
-        depositConfirm: i.depositConfirm,
-        withdrawConfirm: i.withdrawConfirm,
-        minDepositAmount: i.minDepositAmount,
-        minWithdrawAmount: i.minWithdrawAmount
+        withdrawFee: i.withdrawFee ? i.withdrawFee : '0',
+        congestion: i.congestion ? i.congestion : 'Unknown',
+        extraWithdrawFee: i.extraWithdrawFee ? i.extraWithdrawFee : '0',
+        depositConfirm: i.depositConfirm ? i.depositConfirm : '0',
+        withdrawConfirm: i.withdrawConfirm ? i.withdrawConfirm : '0',
+        minDepositAmount: i.minDepositAmount ? i.minDepositAmount : '0',
+        minWithdrawAmount: i.minWithdrawAmount ? i.minWithdrawAmount : '0'
       }
       mod_data.push(res)
     }
